@@ -44,6 +44,16 @@ typedef enum {
   kPD_UNDEFINED_ERROR = -1,
 } PD_Error;
 
+typedef enum {
+  NO_VALUE = 0,
+  FLOAT_VALUE = 1,
+} Sparse_Value_Type;
+
+typedef enum {
+  SPARSE_CSR = 0,
+  SPARSE_CSC = 1,
+} Sparse_Format;
+
 /**
  * Int Vector Functions. Return will be a PD_Error type.
  */
@@ -74,6 +84,17 @@ PD_API int PDMatGetRow(PD_Matrix mat, uint64_t rowID, pd_real** rawRowBuffer);
 PD_API int PDMatCreateNone(PD_Matrix* mat);
 
 PD_API int PDMatGetShape(PD_Matrix mat, uint64_t* height, uint64_t* width);
+
+PD_API int PDSparseMatCreate(PD_Matrix* mat,
+                             uint64_t height,
+                             uint64_t width,
+                             uint64_t nnz,
+                             Sparse_Value_Type valueType,
+                             Sparse_Format format,
+                             bool useGpu);
+
+PD_API int PDSparseMatSetRow(PD_Matrix mat, uint64_t row, uint64_t colNum,
+                             uint32_t* cols, pd_real* values);
 
 /**
  * Arguments functions. Each argument means layer output. Arguments means a

@@ -14,6 +14,22 @@ limitations under the License. */
 
 #include "PaddleCAPI.h"
 #include "gtest/gtest.h"
+#include<random>
+
+const int dim = 30000;
+std::random_device dev;
+std::mt19937_64 rng(dev());
+std::uniform_int_distribution<uint32_t> dist(0, dim);
+
+static std::vector<uint32_t> randomBuffer(size_t bufSize) {
+  std::vector<uint32_t> retv;
+  retv.reserve(bufSize);
+  for (size_t i = 0; i < bufSize; ++i) {
+    retv.push_back(dist(rng));
+  }
+  return retv;
+}
+
 
 TEST(CAPIMatrix, create) {
   PD_Matrix mat;
@@ -44,4 +60,14 @@ TEST(CAPIMatrix, createNone) {
   PD_Matrix mat;
   ASSERT_EQ(kPD_NO_ERROR, PDMatCreateNone(&mat));
   ASSERT_EQ(kPD_NO_ERROR, PDMatDestroy(mat));
+}
+
+TEST(CAPISparseMatrix, create) {
+  int bufSize = 10;
+  PD_Matrix mat;
+  std::vector<uint32_t> tmp = randomBuffer(bufSize);
+  ASSERT_EQ(kPD_NO_ERROR, PDSparseMatCreate(&mat, 1, dim, bufSize,
+    NO_VALUE, SPARSE_CSR, false));
+  ASSERT_EQ(kPD_NO_ERROR, PDSparseMatSetRow(mat, 0, bufSize, tmp.data(),
+    nullptr));
 }

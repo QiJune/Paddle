@@ -72,4 +72,30 @@ int PDMatGetShape(PD_Matrix mat, uint64_t* height, uint64_t* width) {
   }
   return kPD_NO_ERROR;
 }
+
+int PDSparseMatCreate(PD_Matrix* mat,
+                      uint64_t height,
+                      uint64_t width,
+                      uint64_t nnz,
+                      Sparse_Value_Type valueType,
+                      Sparse_Format format,
+                      bool useGpu) {
+  auto ptr = new paddle::capi::CMatrix();
+  ptr->mat = paddle::Matrix::createSparseMatrix(height, width, nnz,
+    static_cast<paddle::SparseValueType>(valueType),
+    static_cast<paddle::SparseFormat>(format),
+    false, useGpu);
+  *mat = ptr;
+  return kPD_NO_ERROR;
+}
+
+int PDSparseMatSetRow(PD_Matrix mat, uint64_t row, uint64_t colNum,
+                      uint32_t* cols, pd_real* values) {
+  if (mat == nullptr) return kPD_NULLPTR;
+  auto ptr = cast(mat);
+  if (ptr->mat == nullptr) return kPD_NO_ERROR;
+  ptr->mat->setRow(row, colNum, cols, values);
+  return kPD_NO_ERROR;
+}
+
 }
