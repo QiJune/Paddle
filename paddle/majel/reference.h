@@ -31,13 +31,13 @@ struct PlacedGetter : public boost::static_visitor<T> {
 };
 
 template <typename T>
-struct PlacePutter : public boost::static_visitor<> {
+struct PlacedPutter : public boost::static_visitor<> {
   T* ptr_;
   const T& value_;
 
-  PlacePutter(T* p, const T& v) : ptr_(p), value(v) {}
+  PlacedPutter(T* p, const T& v) : ptr_(p), value_(v) {}
 
-  void operator()(CpuPlace cpu) const { *ptr_ = value; }
+  void operator()(CpuPlace cpu) const { *ptr_ = value_; }
 #ifndef PADDLE_ONLY_CPU
   void operator()(GpuPlace gpu) const {
     gpu::detail::memcpy_sync(ptr_, &value_, sizeof(T), cudaMemcpyHostToDevice);
@@ -55,9 +55,9 @@ struct PlacedPointer {
   Place place_;
   T* ptr_;
 
-  PlacedPointer(Place p, T* p) : place_(p), ptr_(p) {}
+  PlacedPointer(Place p, T* ptr) : place_(p), ptr_(ptr) {}
 
-  T get() { return boost::apply_visitor(PlacedGetter<T>(ptr_), place_); }
+  T get() const { return boost::apply_visitor(PlacedGetter<T>(ptr_), place_); }
 
   void put(const T& value) {
     return boost::apply_visitor(PlacedPutter<T>(ptr_, value), place_);
@@ -69,9 +69,9 @@ struct Reference {
   typedef T value_type;
 
   PlacedPointer<T> ptr_;
-  sta::shared_ptr<Allocation> alloc_;
+  std::shared_ptr<Allocation> alloc_;
 
-  Reference(PlacedPointer<T> p, std::shared_ptr<Allocation> p)
+  Reference(PlacedPointer<T> p, std::shared_ptr<Allocation> a)
       : ptr_(p), alloc_(a) {}
 
   operator T() const { return ptr_.get(); }
@@ -81,7 +81,7 @@ struct Reference {
                 typename std::enable_if<std::is_convertible<T, U>::value>::type>
   operator U() const {
     return U(ptr_.get());
-  };
+  }
 
   Reference<T>& operator=(const T& other) {
     ptr_.put(other);

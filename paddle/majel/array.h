@@ -49,18 +49,18 @@ public:
       : Array(alloc, size, stride, static_cast<T*>(alloc->ptr())) {}
 
   Array(std::shared_ptr<Allocation> alloc, const Dim<D> size)
-      : Array(alloc, size, contiguous_strides(size));
+      : Array(alloc, size, contiguous_strides(size)) {}
 
   majel::Reference<T> operator[](const Dim<D>& idx) {
     T* location = index(idx);
-    return majel::Reference<T>(
-        majel::PlacedPointer<T>(place(), location, data()));
+    return majel::Reference<T>(majel::PlacedPointer<T>(place(), location),
+                               data());
   }
 
   T operator[](const Dim<D>& idx) const {
     T* location = index(idx);
-    return majel::Reference<T>(
-        majel::PlacedPointer<T>(place(), location, data()));
+    return majel::Reference<T>(majel::PlacedPointer<T>(place(), location),
+                               data());
   }
 
   T* raw_ptr() const { return ptr_; }
@@ -105,7 +105,7 @@ private:
   T* ptr_;
 };
 
-template <typename T int D>
+template <typename T, int D>
 T get(const Array<T, D>& arr, const Dim<D>& idx) {
   return arr[idx];
 }
@@ -116,7 +116,7 @@ void set(Array<T, D>& arr, const Dim<D>& idx, const T& value) {
 };
 
 template <typename T, int OldD, int NewD>
-Array<T, D> reshape(const Array<T, OldD>& x, Dim<NewD> new_size) {
+Array<T, NewD> reshape(const Array<T, OldD>& x, Dim<NewD> new_size) {
   CHECK(contiguous(x.size(), x.stride()))
       << "Reshaping non-contiguous Arrays is not currently implemented.";
   CHECK(x.numel() == product(new_size))
@@ -128,16 +128,16 @@ Array<T, D> reshape(const Array<T, OldD>& x, Dim<NewD> new_size) {
 template <typename T, int D>
 Array<T, 1> flatten(const Array<T, D>& x) {
   return reshape(x, Dim<1>(x.numel()));
-};
+}
 
 template <typename T, int D>
 bool is_same(const Array<T, D>& a, const Array<T, D>& b) {
   return (a.data() == b.data()) && (a.size() == b.size()) &&
          (a.stride() == b.stride()) && (a.raw_ptr() == b.raw_ptr());
-};
+}
 
 template <typename T>
-make_array(const std::vector<T>& input, Place place) {
+Array<T, 1> make_array(const std::vector<T>& input, Place place) {
   std::shared_ptr<majel::Allocation> alloc =
       std::make_shared<majel::Allocation>(sizeof(T) * input.size(), place);
 
@@ -153,7 +153,7 @@ make_array(const std::vector<T>& input, Place place) {
 }
 
 template <typename T>
-make_array(const std::vector<T>& input) {
+Array<T, 1> make_array(const std::vector<T>& input) {
   return make_array(input, CpuPlace());
 }
 }  // namespace majel

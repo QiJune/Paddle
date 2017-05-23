@@ -1,11 +1,11 @@
 #include "cuda_device.h"
 #include <glog/logging.h>
 
-#define CHECK_CUDA(cudaFunc)                               \
-  do {                                                     \
-    cudaError_t cudaStat = cudaFunc;                       \
-    CHECK_EQ(cudaSuccess, cudaStat)                        \
-        << "Cuda Error: " << cudaGetErrorString(cudaStat); \
+#define CHECK_CUDA(cudaFunc)                                         \
+  do {                                                               \
+    cudaError_t cudaStat = cudaFunc;                                 \
+    CHECK_EQ(cudaSuccess, cudaStat) << "Cuda Error: "                \
+                                    << cudaGetErrorString(cudaStat); \
   } while (0)
 
 #ifndef PADDLE_ONLY_CPU
