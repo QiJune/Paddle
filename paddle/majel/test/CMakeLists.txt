@@ -13,4 +13,6 @@ cc_test(allocation_test
 if(WITH_GPU)
     nv_test(cuda_test SRCS cuda_test.cu)
     nv_test(dim_test SRCS dim_test.cu DEPS ddim)
+    nv_test(array_test SRCS array_test.cu
+                       DEPS allocation malloc cuda_device place)
 endif()
