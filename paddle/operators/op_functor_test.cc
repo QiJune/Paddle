@@ -56,18 +56,18 @@ TEST(OpFunctor, MulCPU) {
   }
 
   Tensor t1;
-  t1.mutable_data<float>({4}, CPUPlace());
+  t1.mutable_data<float>({2, 2}, CPUPlace());
 
   Tensor t2;
-  t2.mutable_data<float>({4}, CPUPlace());
+  t2.mutable_data<float>({2, 2}, CPUPlace());
 
   Tensor t3;
-  t3.mutable_data<float>({4}, CPUPlace());
+  t3.mutable_data<float>({2, 2}, CPUPlace());
 
   std::memcpy(t1.data<float>(), t_a, size * sizeof(float));
   std::memcpy(t2.data<float>(), t_b, size * sizeof(float));
 
-  functors::add<CPUPlace, float> functor;
+  functors::mul<CPUPlace, float> functor;
 
   DeviceContext* device = new CPUDeviceContext();
 
