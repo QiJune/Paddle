@@ -7,6 +7,11 @@ using namespace paddle::framework;
 using namespace paddle::platform;
 using namespace paddle::operators;
 
+template <typename T>
+using Matrix =
+    Eigen::TensorMap<Eigen::Tensor<T, 2, Eigen::RowMajor, Eigen::DenseIndex>,
+                     Eigen::Aligned>;
+/*
 TEST(OpFunctor, AddCPU) {
   int size = 4;
 
@@ -82,8 +87,9 @@ TEST(OpFunctor, MulCPU) {
 }
 
 TEST(OpFunctor, SoftmaxCPU) { EXPECT_EQ(1, 1); }
-
+*/
 #ifndef PADDLE_ONLY_CPU
+/*
 TEST(OpFunctor, AddGPU) {
   int size = 4;
 
@@ -122,6 +128,44 @@ TEST(OpFunctor, AddGPU) {
   EXPECT_EQ(t_c[1], 2);
   EXPECT_EQ(t_c[2], 4);
   EXPECT_EQ(t_c[3], 6);
+}
+*/
+
+TEST(OpFunctor, Mul) {
+  int size = 4;
+
+  float* t_a = (float*)malloc(size * sizeof(float));
+  float* t_b = (float*)malloc(size * sizeof(float));
+  float* t_c = (float*)malloc(size * sizeof(float));
+  for (int i = 0; i < size; i++) {
+    t_a[i] = i;
+    t_b[i] = i;
+  }
+
+  float* d_a;
+  float* d_b;
+  float* d_c;
+  cudaMalloc((void**)&d_a, size * sizeof(float));
+  cudaMalloc((void**)&d_b, size * sizeof(float));
+  cudaMalloc((void**)&d_c, size * sizeof(float));
+
+  cudaMemcpy(d_a, t_a, size * sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_b, t_b, size * sizeof(float), cudaMemcpyHostToDevice);
+
+  Matrix<float> a(d_a, 2, 2);
+  Matrix<float> b(d_b, 2, 2);
+  Matrix<float> c(d_c, 2, 2);
+
+  Eigen::CudaStreamDevice sd;
+  Eigen::GpuDevice dd(&sd);
+  c.device(dd) = a.contract(b, dim_pair);
+
+  cudaMemcpy(t_c, d_c, size * sizeof(float), cudaMemcpyDeviceToHost);
+
+  EXPECT_EQ(t_c[0], 2);
+  EXPECT_EQ(t_c[1], 3);
+  EXPECT_EQ(t_c[2], 6);
+  EXPECT_EQ(t_c[3], 11);
 }
 
 TEST(OpFunctor, MulGPU) {
