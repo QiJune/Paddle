@@ -11,6 +11,7 @@ limitations under the License. */
 
 #pragma once
 
+#include "glog/logging.h"
 #include "paddle/platform/enforce.h"
 #include "paddle/platform/place.h"
 
@@ -88,9 +89,15 @@ class GPUPlaceGuard {
 class CUDADeviceContext : public DeviceContext {
  public:
   explicit CUDADeviceContext(const GPUPlace gpu_place) : gpu_place_(gpu_place) {
-    GPUPlaceGuard guard(gpu_place_);
+    // GPUPlaceGuard guard(gpu_place_);
+
+    LOG(INFO) << "previous " << GetCurrentDeviceId();
+    LOG(INFO) << "new place " << gpu_place_;
+    paddle::platform::SetDeviceId(gpu_place_.device);
     PADDLE_ENFORCE(cudaStreamCreate(&stream_), "cudaStreamCreate failed");
-    eigen_stream_.reset(new Eigen::CudaStreamDevice(&stream_));
+    eigen_stream_.reset(
+        new Eigen::CudaStreamDevice(&stream_, gpu_place_.device));
+    // eigen_stream_.reset(new Eigen::CudaStreamDevice(gpu_place.device));
     eigen_device_.reset(new Eigen::GpuDevice(eigen_stream_.get()));
   }
 

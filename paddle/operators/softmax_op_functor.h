@@ -1,3 +1,4 @@
+#pragma once
 #include "paddle/framework/eigen.h"
 #include "paddle/framework/tensor.h"
 #include "paddle/platform/device_context.h"
@@ -24,20 +25,22 @@ struct softmax {
     Eigen::DSizes<int, 2> batch_by_one(batch_size, 1);
     Eigen::DSizes<int, 2> one_by_class(1, num_classes);
 
-    auto shifted_logits = (logits - logits.maximum(along_class)
-                                        .eval()
-                                        .reshape(batch_by_one)
-                                        .broadcast(one_by_class));
+    auto shifted_logits = (logits -
+                           logits.maximum(along_class)
+                               .eval()
+                               .reshape(batch_by_one)
+                               .broadcast(one_by_class));
 
     softmax.device(*(device_context.get_eigen_device<Place>())) =
         shifted_logits.exp();
 
     softmax.device(*(device_context.get_eigen_device<Place>())) =
-        (softmax * softmax.sum(along_class)
-                       .inverse()
-                       .eval()
-                       .reshape(batch_by_one)
-                       .broadcast(one_by_class));
+        (softmax *
+         softmax.sum(along_class)
+             .inverse()
+             .eval()
+             .reshape(batch_by_one)
+             .broadcast(one_by_class));
   }
 };
 

@@ -13,6 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 
 #pragma once
+#ifndef PADDLE_ONLY_CPU
+#define EIGEN_USE_GPU
+#endif
 
 #include <cstdint>
 #include <cstring>

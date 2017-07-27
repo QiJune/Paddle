@@ -18,6 +18,9 @@ limitations under the License. */
 #include <string>
 #include <unordered_map>
 #include <vector>
+#ifndef PADDLE_ONLY_CPU
+#define EIGEN_USE_GPU
+#endif
 
 #include "paddle/framework/attr_checker.h"
 #include "paddle/framework/op_desc.pb.h"

@@ -1,7 +1,20 @@
 #include "gtest/gtest.h"
+#include "glog/logging.h"
 #include "paddle/operators/add_op_functor.h"
 #include "paddle/operators/mul_op_functor.h"
 #include "paddle/operators/softmax_op_functor.h"
+#ifndef PADDLE_ONLY_CPU
+#include "cuda_runtime.h"
+#ifndef EIGEN_USE_GPU
+#define EIGEN_USE_GPU
+#endif
+#endif
+
+#include <iostream>
+#include <cmath>
+#include "Eigen/Core"
+#include "Eigen/Dense"
+#include "unsupported/Eigen/CXX11/Tensor"
 
 using namespace paddle::framework;
 using namespace paddle::platform;
@@ -89,7 +102,6 @@ TEST(OpFunctor, MulCPU) {
 TEST(OpFunctor, SoftmaxCPU) { EXPECT_EQ(1, 1); }
 */
 #ifndef PADDLE_ONLY_CPU
-/*
 TEST(OpFunctor, AddGPU) {
   int size = 4;
 
@@ -119,7 +131,7 @@ TEST(OpFunctor, AddGPU) {
 
   DeviceContext* device = new CUDADeviceContext(0);
 
-  functor(*device, t1, t2, &t3);
+  functor(*device, t1, t2, t3);
 
   cudaMemcpy(
       t_c, t3.data<float>(), size * sizeof(float), cudaMemcpyDeviceToHost);
@@ -129,9 +141,8 @@ TEST(OpFunctor, AddGPU) {
   EXPECT_EQ(t_c[2], 4);
   EXPECT_EQ(t_c[3], 6);
 }
-*/
-
 TEST(OpFunctor, Mul) {
+   LOG(INFO) << paddle::platform::GetCurrentDeviceId(); 
   int size = 4;
 
   float* t_a = (float*)malloc(size * sizeof(float));
@@ -158,8 +169,12 @@ TEST(OpFunctor, Mul) {
 
   Eigen::CudaStreamDevice sd;
   Eigen::GpuDevice dd(&sd);
+  Eigen::array<Eigen::IndexPair<Eigen::DenseIndex>, 1> dim_pair;
+  dim_pair[0].first = 1;
+  dim_pair[0].second = 0;
+  LOG(INFO) << "before mul"; 
   c.device(dd) = a.contract(b, dim_pair);
-
+  LOG(INFO) << "after mul";
   cudaMemcpy(t_c, d_c, size * sizeof(float), cudaMemcpyDeviceToHost);
 
   EXPECT_EQ(t_c[0], 2);
@@ -167,7 +182,7 @@ TEST(OpFunctor, Mul) {
   EXPECT_EQ(t_c[2], 6);
   EXPECT_EQ(t_c[3], 11);
 }
-
+/*
 TEST(OpFunctor, MulGPU) {
   int size = 4;
 
@@ -207,4 +222,5 @@ TEST(OpFunctor, MulGPU) {
   EXPECT_EQ(t_c[2], 6);
   EXPECT_EQ(t_c[3], 11);
 }
+*/
 #endif
