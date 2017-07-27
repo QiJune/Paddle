@@ -54,3 +54,9 @@ op_library(fc_op SRCS fc_op.cc DEPS mul_op rowwise_add_op sigmoid_op
         softmax_op net)
 
 op_library(sgd_op SRCS sgd_op.cc sgd_op.cu)
+
+if (WITH_GPU)
+    nv_test(op_functor_test SRCS op_functor_test.cc DEPS device_context tensor)
+else()
+    cc_test(op_functor_test SRCS op_functor_test.cc DEPS device_context tensor)
+endif()

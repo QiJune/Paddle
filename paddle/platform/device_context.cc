@@ -15,14 +15,15 @@ namespace paddle {
 namespace platform {
 
 template <>
-Eigen::DefaultDevice* DeviceContext::get_eigen_device<Eigen::DefaultDevice>()
-    const {
+Eigen::DefaultDevice* DeviceContext::get_eigen_device<
+    platform::CPUPlace, Eigen::DefaultDevice>() const {
   return reinterpret_cast<const CPUDeviceContext*>(this)->eigen_device();
 }
 
 #ifndef PADDLE_ONLY_CPU
 template <>
-Eigen::GpuDevice* DeviceContext::get_eigen_device<Eigen::GpuDevice>() const {
+Eigen::GpuDevice*
+DeviceContext::get_eigen_device<platform::GPUPlace, Eigen::GpuDevice>() const {
   return reinterpret_cast<const CUDADeviceContext*>(this)->eigen_device();
 }
 #endif
