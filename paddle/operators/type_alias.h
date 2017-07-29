@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "glog/logging.h"
 #include "paddle/framework/eigen.h"
 #include "paddle/framework/net.h"
 #include "paddle/framework/op_registry.h"

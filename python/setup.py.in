@@ -1,17 +1,8 @@
 from setuptools import setup
 
 packages=['paddle',
-          'paddle.proto',
-          'paddle.trainer',
-          'paddle.trainer_config_helpers',
-          'paddle.utils',
-          'paddle.v2',
-          'paddle.v2.dataset',
-          'paddle.v2.reader',
-          'paddle.v2.master',
-          'paddle.v2.plot',
-          'paddle.v2.framework',
-          'paddle.v2.framework.proto']
+          'paddle.framework',
+          ]
 
 setup_requires=["requests",
                 "numpy",
@@ -31,13 +22,11 @@ setup(name='paddle',
       description='Parallel Distributed Deep Learning',
       install_requires=setup_requires,
       packages=packages,
-      package_data={'paddle.v2.master': ['libpaddle_master.so'],
-            'paddle.v2.framework': ['core.so']
+      package_data={
+            'paddle.framework': ['core.so']
       },
       package_dir={
           '': '${CMAKE_CURRENT_SOURCE_DIR}',
-          # The paddle.v2.framework.proto will be generated while compiling.
-          # So that package points to other directory.
-          'paddle.v2.framework.proto': '${PROJ_BINARY_ROOT}/paddle/framework'
+          'paddle.ramework.proto': '${PROJ_BINARY_ROOT}/paddle/framework'
       },
 )
