@@ -41,6 +41,7 @@ function(op_library TARGET)
     endif()
 endfunction()
 
+add_subdirectory(functors)
 op_library(add_op SRCS add_op.cc add_op.cu)
 cc_test(add_op_test SRCS add_op_test.cc DEPS add_op)
 

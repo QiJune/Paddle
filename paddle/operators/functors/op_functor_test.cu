@@ -1,8 +1,8 @@
 #include "glog/logging.h"
 #include "gtest/gtest.h"
-#include "paddle/operators/add_op_functor.h"
-#include "paddle/operators/mul_op_functor.h"
-#include "paddle/operators/softmax_op_functor.h"
+#include "paddle/operators/functors/add_op_functor.h"
+#include "paddle/operators/functors/mul_op_functor.h"
+#include "paddle/operators/functors/softmax_op_functor.h"
 #ifndef PADDLE_ONLY_CPU
 #include "cuda_runtime.h"
 #ifndef EIGEN_USE_GPU
