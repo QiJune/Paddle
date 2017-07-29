@@ -1,4 +1,4 @@
-from paddle.v2.framework.default_scope_funcs import *
+from paddle.framework.default_scope_funcs import *
 import unittest
 
 

@@ -1,7 +1,7 @@
-import paddle.v2.framework.core as core
+import paddle.framework.core as core
 import unittest
 import numpy as np
-import paddle.v2.framework.create_op_creation_methods as creation
+import paddle.framework.create_op_creation_methods as creation
 
 ops = creation.op_creations
 

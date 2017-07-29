@@ -1,4 +1,4 @@
-import paddle.v2.framework.core as core
+import paddle.framework.core as core
 import unittest
 import numpy
 

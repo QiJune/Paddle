@@ -1,5 +1,5 @@
-import paddle.v2.framework.core as core
-from paddle.v2.framework.create_op_creation_methods import op_creations
+import paddle.framework.core as core
+from paddle.framework.create_op_creation_methods import op_creations
 import unittest
 
 

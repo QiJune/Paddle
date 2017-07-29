@@ -2,6 +2,7 @@ from setuptools import setup
 
 packages=['paddle',
           'paddle.framework',
+          'paddle.framework.proto'
           ]
 
 setup_requires=["requests",
@@ -27,6 +28,6 @@ setup(name='paddle',
       },
       package_dir={
           '': '${CMAKE_CURRENT_SOURCE_DIR}',
-          'paddle.ramework.proto': '${PROJ_BINARY_ROOT}/paddle/framework'
+          'paddle.framework.proto': '${PROJ_BINARY_ROOT}/paddle/framework'
       },
 )

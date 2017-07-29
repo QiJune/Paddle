@@ -1,5 +1,5 @@
-from paddle.v2.framework.network import Network
-import paddle.v2.framework.core as core
+from paddle.framework.network import Network
+import paddle.framework.core as core
 import unittest
 
 

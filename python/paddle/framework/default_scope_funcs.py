@@ -13,7 +13,7 @@ A `scoped_function` will take a `function` as input. That function will be
 invoked in a new local scope. 
 """
 
-import paddle.v2.framework.core
+import paddle.framework.core
 import threading
 
 __tl_scope__ = threading.local()
@@ -33,7 +33,7 @@ def get_cur_scope():
     if cur_scope_stack is None:
         __tl_scope__.cur_scope = list()
     if len(__tl_scope__.cur_scope) == 0:
-        __tl_scope__.cur_scope.append(paddle.v2.framework.core.Scope(None))
+        __tl_scope__.cur_scope.append(paddle.framework.core.Scope(None))
     return __tl_scope__.cur_scope[-1]
 
 
@@ -42,7 +42,7 @@ def enter_local_scope():
     Enter a new local scope
     """
     cur_scope = get_cur_scope()
-    new_scope = paddle.v2.framework.core.Scope(cur_scope)
+    new_scope = paddle.framework.core.Scope(cur_scope)
     __tl_scope__.cur_scope.append(new_scope)
 
 

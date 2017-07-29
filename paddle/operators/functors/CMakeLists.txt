@@ -1,5 +1,5 @@
 if (WITH_GPU)
-    nv_test(op_functor_test SRCS op_functor_test.cu DEPS device_context tensor)
+    nv_test(op_functor_test SRCS op_functor_test.cu op_functor_test.cc DEPS device_context tensor)
 else()
     cc_test(op_functor_test SRCS op_functor_test.cc DEPS device_context tensor)
 endif()

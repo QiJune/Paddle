@@ -74,7 +74,6 @@ include(version)            # set PADDLE_VERSION
 
 
 include_directories("${PROJ_ROOT}")
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/proto")
 include_directories(${Boost_INCLUDE_DIRS})
 
 set(EXTERNAL_LIBS
@@ -86,9 +85,8 @@ set(EXTERNAL_LIBS
     ${PYTHON_LIBRARIES}
 )
 
-
-
 add_subdirectory(paddle)
+
 if(WITH_PYTHON)
   add_subdirectory(python)
 endif()

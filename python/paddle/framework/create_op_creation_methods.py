@@ -1,7 +1,7 @@
-import paddle.v2.framework.core as core
-import paddle.v2.framework.proto.op_proto_pb2 as op_proto_pb2
-import paddle.v2.framework.proto.op_desc_pb2 as op_desc_pb2
-import paddle.v2.framework.proto.attr_type_pb2 as attr_type_pb2
+import paddle.framework.core as core
+import paddle.framework.proto.op_proto_pb2 as op_proto_pb2
+import paddle.framework.proto.op_desc_pb2 as op_desc_pb2
+import paddle.framework.proto.attr_type_pb2 as attr_type_pb2
 import cStringIO
 
 

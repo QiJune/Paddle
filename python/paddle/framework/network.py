@@ -1,5 +1,5 @@
-import paddle.v2.framework.core as core
-from paddle.v2.framework.create_op_creation_methods import op_creations
+import paddle.framework.core as core
+from paddle.framework.create_op_creation_methods import op_creations
 from default_scope_funcs import create_var, get_var, get_cur_scope
 
 __all__ = ['Network']  # Only expose Network
