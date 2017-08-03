@@ -33,9 +33,11 @@ RUN apt-get update && \
     clang-3.8 llvm-3.8 libclang-3.8-dev \
     net-tools && \
     apt-get clean -y
-    
-RUN ln -sf gcc /usr/bin/gcc-4.8 && ln -sf g++ /usr/bin/g++-4.8 \
-    ln -sf gcc-ar /usr/bin/gcc-ar-4.8 && ln -sf gcc-nm /usr/bin/gcc-nm-4.8 && \
+
+RUN ln -sf gcc /usr/bin/gcc-4.8 && \
+    ln -sf g++ /usr/bin/g++-4.8 && \
+    ln -sf gcc-ar /usr/bin/gcc-ar-4.8 && \
+    ln -sf gcc-nm /usr/bin/gcc-nm-4.8 && \
     ln -sf gcc-ranlib /usr/bin/gcc-ranlib-4.8
 
 # Install Go and glide
