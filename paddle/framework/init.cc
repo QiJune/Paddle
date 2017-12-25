@@ -37,6 +37,7 @@ void InitGflags(std::vector<std::string> &argv) {
     }
     google::ParseCommandLineFlags(&argc, &arr, true);
     VLOG(1) << "Init commandline: " << line;
+    delete[] arr;
   });
 }
 
