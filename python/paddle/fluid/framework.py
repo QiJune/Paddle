@@ -402,6 +402,7 @@ class Operator(object):
         self.block = block
         self.desc = desc
         self.attrs = attrs
+        self.name = ""
         if len(self.desc.type()) != 0:
             return
         if type is None:
