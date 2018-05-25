@@ -290,7 +290,7 @@ class LayerHelper(object):
         # Deepcopy the attr so that parameters can be shared in program
         attr = copy.deepcopy(attr)
         assert isinstance(attr, ParamAttr)
-        suffix = 'b' if is_bias else 'w'
+        suffix = 'BIAS' if is_bias else 'WEIGHT'
         if attr.name is None:
             attr.name = unique_name.generate(".".join([self.name, suffix]))
 
