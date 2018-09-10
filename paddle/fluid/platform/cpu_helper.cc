@@ -22,6 +22,7 @@ limitations under the License. */
 
 #ifdef PADDLE_USE_OPENBLAS
 #include <cblas.h>
+extern "C" void openblas_set_num_threads(int num_threads);
 #endif
 
 namespace paddle {
