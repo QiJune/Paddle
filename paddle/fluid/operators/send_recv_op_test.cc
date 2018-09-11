@@ -129,7 +129,10 @@ void StartServerNet(bool is_sparse, std::atomic<bool> *initialized) {
   // sub program run in listen_and_serv_op, for simple test we use sum
   f::ProgramDesc program;
   const auto &root_block = program.Block(0);
+  std::vector<framework::BlockDesc *> optimize_blocks;
   auto *optimize_block = program.AppendBlock(root_block);
+  optimize_blocks.push_back(optimize_block);
+
   auto *prefetch_block = program.AppendBlock(root_block);
   // X for server side tensors, RX for received tensors, must be of same shape.
   AddOp("sum", {{"X", {"x0", "x1"}}}, {{"Out", {"Out"}}}, {}, optimize_block,
@@ -139,7 +142,7 @@ void StartServerNet(bool is_sparse, std::atomic<bool> *initialized) {
   attrs.insert({"Fanin", 1});
   attrs.insert({"ParamList", std::vector<std::string>({"Out"})});
   attrs.insert({"GradList", std::vector<std::string>({"x1"})});
-  attrs.insert({"OptimizeBlock", optimize_block});
+  attrs.insert({"optimize_blocks", optimize_blocks});
   attrs.insert({"PrefetchBlock", prefetch_block});
   attrs.insert({"grad_to_block_id", std::vector<std::string>({""})});
   attrs.insert({"sync_mode", true});
@@ -156,6 +159,7 @@ TEST(SendRecvOp, CPUDense) {
   std::thread server_thread(StartServerNet, false, &initialized);
   while (!initialized) {
   }
+
   static_cast<paddle::operators::ListenAndServOp *>(listen_and_serv_op.get())
       ->WaitServerReady();
 
@@ -175,9 +179,10 @@ TEST(SendRecvOp, CPUDense) {
   std::string endpoint = paddle::string::Sprintf("127.0.0.1:%d", selected_port);
   attrs.insert({"endpoints", std::vector<std::string>({endpoint})});
   attrs.insert({"epmap", std::vector<std::string>({endpoint})});
-  auto send_op = f::OpRegistry::CreateOp(
-      "send", {{"X", {"x1"}}},
-      {{"Out", {"Out"}}, {"RPCClient", {"RPC_CLIENT_VAR"}}}, attrs);
+  const f::VariableNameMap &inputs = {{"X", {"x1"}}};
+  const f::VariableNameMap &outputs = {{"Out", {"Out"}}};
+
+  auto send_op = f::OpRegistry::CreateOp("send", inputs, outputs, attrs);
   send_op->Run(scope, place);
 
   auto in_var = scope.Var("x1");
@@ -220,9 +225,8 @@ TEST(SendRecvOp, CPUSparse) {
   std::string endpoint = paddle::string::Sprintf("127.0.0.1:%d", selected_port);
   attrs.insert({"endpoints", std::vector<std::string>({endpoint})});
   attrs.insert({"epmap", std::vector<std::string>({endpoint})});
-  auto send_op = f::OpRegistry::CreateOp(
-      "send", {{"X", {"x1"}}},
-      {{"Out", {"Out"}}, {"RPCClient", {"RPC_CLIENT_VAR"}}}, attrs);
+  auto send_op = f::OpRegistry::CreateOp("send", {{"X", {"x1"}}},
+                                         {{"Out", {"Out"}}}, attrs);
   send_op->Run(scope, place);
 
   auto x0 = scope.Var("x0")->GetMutable<f::SelectedRows>();
